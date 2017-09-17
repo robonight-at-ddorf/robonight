@@ -11,6 +11,8 @@ For use with the Adafruit Motor Shield v2
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
+#include "sensor.h"
+
 // Create the motor shield object with the default I2C address
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
 // Or, create it with a different I2C address (say for stacking)
@@ -24,13 +26,21 @@ Adafruit_DCMotor *leftMotor = AFMS.getMotor(2);
 void setup() {
   Serial.begin(9600);           // set up Serial library at 9600 bps
   Serial.println("Adafruit Motorshield v2 - DC Motor test!");
-
+  Serial.println(":)");
   AFMS.begin();  // create with the default frequency 1.6KHz
   //AFMS.begin(1000);  // OR with a different frequency, say 1KHz
-  
+  Serial.println("After AFMS.begin()");
   // Set the speed to start, from 0 (off) to 255 (max speed)
   rightMotor->setSpeed(150);
   leftMotor->setSpeed(150);
+
+  digitalWrite(LED_BUILTIN, HIGH);
+
+  Serial.println("Speeds are set!");
+  rightMotor->run(FORWARD);
+  leftMotor->run(FORWARD);
+
+  Serial.println("End of setup!");
   //myMotor->run(FORWARD);
   //myOtherMotor->run(FORWARD);
   // turn on motor
@@ -38,59 +48,40 @@ void setup() {
   //myOtherMotor->run(RELEASE);
 }
 
+const int SPEED_LOW = 25;
+const int SPEED_HIGH = 150;
+
+void moveLeft() {
+  rightMotor->setSpeed(SPEED_LOW); 
+  leftMotor->setSpeed(SPEED_HIGH);   
+}
+
+void moveRight() {
+  rightMotor->setSpeed(SPEED_HIGH); 
+  leftMotor->setSpeed(SPEED_LOW);   
+}
+
+
+void moveStraight() {
+  rightMotor->setSpeed(SPEED_HIGH); 
+  leftMotor->setSpeed(SPEED_HIGH);   
+}
+
 void loop() {
-  uint8_t i;
-  
-  Serial.print("tick");
+  Serial.println("In loop!");
+  Direction direction = getDirection();
 
-  rightMotor->run(FORWARD);
-  leftMotor->run(FORWARD);
-  for (i=0; i<255; i++) {
-    rightMotor->setSpeed(i); 
-    leftMotor->setSpeed(i); 
-    delay(10);
-  }
-  //stops
-  for (i=255; i!=0; i--) {
-    rightMotor->setSpeed(i);
-    leftMotor->setSpeed(i);  
-    delay(10);
-  }
-  
-  delay(1000);
-  
-  //turns left
-  for (i=0; i<127; i++) {
-    rightMotor->setSpeed(i); 
-    leftMotor->setSpeed(2*i); 
-    delay(20);
-  }
-  delay(1500);
-  for (i=127; i!=0; i--) {
-    rightMotor->setSpeed(i);
-    leftMotor->setSpeed(2*i);  
-    delay(20);
-  }
-  
-  delay(1000);
-
-  rightMotor->run(BACKWARD);
-  leftMotor->run(BACKWARD);
-  
-  //turns right
-  for (i=0; i<127; i++) {
-    rightMotor->setSpeed(2*i); 
-    leftMotor->setSpeed(i); 
-    delay(20);
-  }
-  delay(1500);
-  for (i=127; i!=0; i--) {
-    rightMotor->setSpeed(2*i);
-    leftMotor->setSpeed(i);  
-    delay(20);
+  switch(direction) {
+    case LEFT:
+      moveLeft();
+      break;
+    case STRAIGHT:
+      moveStraight();
+      break;
+    case RIGHT:
+      moveRight();
+      break;
   }
 
-  rightMotor->run(RELEASE);
-  leftMotor->run(RELEASE);
-  delay(1000);
+  delay(25);
 }
