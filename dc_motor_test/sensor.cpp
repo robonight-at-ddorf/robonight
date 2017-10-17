@@ -25,8 +25,10 @@ Direction getDirection2(int rightValue, int leftValue){
   if (leftOnBlack) {
     return LEFT;
   }
-  if (rightOnBlack) {
+  else if (rightOnBlack) {
     return RIGHT;
+  } else {
+    return STRAIGHT;
   }
   return UNKNOWN;
 }
