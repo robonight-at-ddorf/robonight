@@ -25,12 +25,10 @@ Direction getDirection2(int rightValue, int leftValue){
   if (leftOnBlack) {
     return LEFT;
   }
-  else if (rightOnBlack) {
+  if (rightOnBlack) {
     return RIGHT;
-  } else {
-    return STRAIGHT;
   }
-  return UNKNOWN;
+  return STRAIGHT;
 }
 
 Direction getDirection() {
@@ -42,4 +40,3 @@ Direction getDirection() {
   Serial.println(directionToString(direction));
   return direction;
 }
-
