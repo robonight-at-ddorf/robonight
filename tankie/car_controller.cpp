@@ -1,6 +1,6 @@
 
 #include <Arduino.h>
-#include "sensor.h"
+#include "car_controller.h"
 
 String directionToString(Direction direction) {
   switch(direction) {
